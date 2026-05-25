@@ -1,25 +1,37 @@
-// Smooth scroll to contact
+"use strict";
+
+/* =========================
+   SMOOTH SCROLL TO CONTACT
+========================= */
 function scrollToContact() {
-  document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
+  const contactSection = document.getElementById("contact");
+  if (contactSection) {
+    contactSection.scrollIntoView({ behavior: "smooth" });
+  }
 }
 
 /* =========================
-   SCROLL ANIMATION (SLIDE)
+   SCROLL ANIMATION (INTERSECTION OBSERVER)
 ========================= */
 
 const sections = document.querySelectorAll(".section");
 
-const observer = new IntersectionObserver((entries) => {
+const observerOptions = {
+  threshold: 0.2,
+};
+
+const observer = new IntersectionObserver((entries, observer) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
       entry.target.classList.add("show");
+      observer.unobserve(entry.target); // একবার animate হলে আবার observe করবে না (performance better)
     }
   });
-}, {
-  threshold: 0.2
-});
+}, observerOptions);
 
-sections.forEach((sec) => observer.observe(sec));
+sections.forEach((section) => {
+  observer.observe(section);
+});
 
 /* =========================
    CONTACT FORM HANDLING
@@ -28,35 +40,54 @@ sections.forEach((sec) => observer.observe(sec));
 const form = document.getElementById("contactForm");
 const statusText = document.getElementById("status");
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
+if (form) {
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-  let name = document.getElementById("name").value.trim();
-  let email = document.getElementById("email").value.trim();
-  let message = document.getElementById("message").value.trim();
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const message = document.getElementById("message").value.trim();
 
-  // basic validation
-  if (name === "" || email === "" || message === "") {
-    statusText.style.color = "red";
-    statusText.innerText = "Please fill all fields!";
-    return;
-  }
+    // validation
+    if (!name || !email || !message) {
+      showStatus("Please fill all fields!", "red");
+      return;
+    }
 
-  // success message
-  statusText.style.color = "lightgreen";
-  statusText.innerText = "Message sent successfully! 🚀";
+    if (!validateEmail(email)) {
+      showStatus("Please enter a valid email!", "red");
+      return;
+    }
 
-  console.log({
-    name: name,
-    email: email,
-    message: message
+    // success
+    showStatus("Message sent successfully! 🚀", "lightgreen");
+
+    console.log({ name, email, message });
+
+    form.reset();
+
+    setTimeout(() => {
+      clearStatus();
+    }, 3000);
   });
+}
 
-  // reset form
-  this.reset();
+/* =========================
+   HELPER FUNCTIONS
+========================= */
 
-  // auto hide message after 3 sec
-  setTimeout(() => {
-    statusText.innerText = "";
-  }, 3000);
-});
+function showStatus(message, color) {
+  if (!statusText) return;
+  statusText.style.color = color;
+  statusText.innerText = message;
+}
+
+function clearStatus() {
+  if (!statusText) return;
+  statusText.innerText = "";
+}
+
+function validateEmail(email) {
+  // simple email regex
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
