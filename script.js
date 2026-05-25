@@ -3,19 +3,60 @@ function scrollToContact() {
   document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
 }
 
-// Contact form (fake backend simulation)
-document.getElementById("contactForm").addEventListener("submit", function(e) {
+/* =========================
+   SCROLL ANIMATION (SLIDE)
+========================= */
+
+const sections = document.querySelectorAll(".section");
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("show");
+    }
+  });
+}, {
+  threshold: 0.2
+});
+
+sections.forEach((sec) => observer.observe(sec));
+
+/* =========================
+   CONTACT FORM HANDLING
+========================= */
+
+const form = document.getElementById("contactForm");
+const statusText = document.getElementById("status");
+
+form.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  let name = document.getElementById("name").value;
-  let email = document.getElementById("email").value;
-  let message = document.getElementById("message").value;
+  let name = document.getElementById("name").value.trim();
+  let email = document.getElementById("email").value.trim();
+  let message = document.getElementById("message").value.trim();
 
-  document.getElementById("status").innerText =
-    "Message sent successfully!";
+  // basic validation
+  if (name === "" || email === "" || message === "") {
+    statusText.style.color = "red";
+    statusText.innerText = "Please fill all fields!";
+    return;
+  }
+
+  // success message
+  statusText.style.color = "lightgreen";
+  statusText.innerText = "Message sent successfully! 🚀";
+
+  console.log({
+    name: name,
+    email: email,
+    message: message
+  });
 
   // reset form
   this.reset();
 
-  console.log({ name, email, message });
+  // auto hide message after 3 sec
+  setTimeout(() => {
+    statusText.innerText = "";
+  }, 3000);
 });

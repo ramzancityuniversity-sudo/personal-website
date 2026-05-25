@@ -76,6 +76,17 @@ nav a:hover {
 .section {
   padding: 80px 50px;
   text-align: center;
+
+  /* animation base */
+  opacity: 0;
+  transform: translateY(60px);
+  transition: all 0.8s ease;
+}
+
+/* active animation */
+.section.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .section h1 {
@@ -133,4 +144,25 @@ footer {
   padding: 20px;
   background: #111827;
   margin-top: 40px;
+}
+
+/* SECTION COLORS */
+#home {
+  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+}
+
+#about {
+  background: linear-gradient(135deg, #111827, #0f766e);
+}
+
+#skills {
+  background: linear-gradient(135deg, #1f2937, #7c3aed);
+}
+
+#projects {
+  background: linear-gradient(135deg, #0f172a, #b91c1c);
+}
+
+#contact {
+  background: linear-gradient(135deg, #111827, #2563eb);
 }
